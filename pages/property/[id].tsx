@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useState, useEffect } from "react";
 import PropertyDetail from "@/components/property/PropertyDetail";
 
@@ -25,10 +25,11 @@ export default function PropertyDetailPage() {
       if (!id) return;
 
       try {
-        const response = await axios.get(`/api/properties/${id}`);
+        const response = await axios.get<Property>(`/api/properties/${id}`);
         setProperty(response.data);
-      } catch (err: any) {
-        console.error("Error fetching property details:", err);
+      } catch (err) {
+        const error = err as AxiosError;
+        console.error("Error fetching property details:", error.message);
         setError("Failed to load property details");
       } finally {
         setLoading(false);
